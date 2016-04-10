@@ -18,6 +18,7 @@ using System.Numerics;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml.Hosting;
+using CompositionAnimationToolkit;
 
 namespace CompositionSampleGallery
 {
@@ -31,10 +32,10 @@ namespace CompositionSampleGallery
             this.InitializeComponent();
         }
 
-        public static string        StaticSampleName    { get { return "Expressions & PropertySets"; } }
-        public override string      SampleName          { get { return StaticSampleName; } }
-        public override string      SampleDescription   { get { return "Demonstrates how to use ExpressionAnimations and CompositionPropertySets to create a simple orbiting Visual."; } }
-        public override string      SampleCodeUri       { get { return "http://go.microsoft.com/fwlink/p/?LinkID=761172"; } }
+        public static string StaticSampleName { get { return "Expressions & PropertySets"; } }
+        public override string SampleName { get { return StaticSampleName; } }
+        public override string SampleDescription { get { return "Demonstrates how to use ExpressionAnimations and CompositionPropertySets to create a simple orbiting Visual."; } }
+        public override string SampleCodeUri { get { return "http://go.microsoft.com/fwlink/p/?LinkID=761172"; } }
 
         private void SamplePage_Loaded(object sender, Windows.UI.Xaml.RoutedEventArgs e)
         {
@@ -79,10 +80,9 @@ namespace CompositionSampleGallery
             // the current value of it's offset and keep the blue sprite locked in orbit.
             //
 
-            ExpressionAnimation expressionAnimation = compositor.CreateExpressionAnimation("visual.Offset + " +
-                                                                                           "propertySet.CenterPointOffset + " +
-                                                                                           "Vector3(cos(ToRadians(propertySet.Rotation)) * 150," +
-                                                                                                   "sin(ToRadians(propertySet.Rotation)) * 75, 0)");
+            ExpressionAnimation expressionAnimation = compositor.CreateExpressionAnimation();
+
+
 
             //
             // Create the PropertySet.  This property bag contains all the value referenced in the expression.  We can
@@ -91,12 +91,21 @@ namespace CompositionSampleGallery
 
             CompositionPropertySet propertySet = compositor.CreatePropertySet();
             propertySet.InsertScalar("Rotation", 0f);
-            propertySet.InsertVector3("CenterPointOffset", new Vector3(redSprite.Size.X / 2 - blueSprite.Size.X / 2, 
+            propertySet.InsertVector3("CenterPointOffset", new Vector3(redSprite.Size.X / 2 - blueSprite.Size.X / 2,
                                                                        redSprite.Size.Y / 2 - blueSprite.Size.Y / 2, 0));
 
-            // Set the parameters of the expression animation
-            expressionAnimation.SetReferenceParameter("propertySet", propertySet);
-            expressionAnimation.SetReferenceParameter("visual", redSprite);
+
+            expressionAnimation.ExpressionLambda(c => redSprite.Offset + propertySet.Get<Vector3>("CenterPointOffset")
+            + c.Vector3(c.Cos(c.ToRadians(propertySet.Get<float>("Rotation"))) * 150, c.Sin(c.ToRadians(propertySet.Get<float>("Rotation"))) * 75, 0));
+
+            //expressionAnimation.Expression = "visual.Offset + " +
+            //                                                                               "propertySet.CenterPointOffset + " +
+            //                                                                               "Vector3(cos(ToRadians(propertySet.Rotation)) * 150," +
+            //                                                                                       "sin(ToRadians(propertySet.Rotation)) * 75, 0)";
+
+            //// Set the parameters of the expression animation
+            //expressionAnimation.SetReferenceParameter("propertySet", propertySet);
+            //expressionAnimation.SetReferenceParameter("visual", redSprite);
 
             // Start the expression animation!
             blueSprite.StartAnimation("Offset", expressionAnimation);
