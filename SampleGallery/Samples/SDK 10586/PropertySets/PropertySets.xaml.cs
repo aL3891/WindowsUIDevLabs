@@ -82,21 +82,32 @@ namespace CompositionSampleGallery
 
             ExpressionAnimation expressionAnimation = compositor.CreateExpressionAnimation();
 
-
-
             //
             // Create the PropertySet.  This property bag contains all the value referenced in the expression.  We can
             // animation these property leading to the expression being re-evaluated per frame.
             //
 
-            CompositionPropertySet propertySet = compositor.CreatePropertySet();
-            propertySet.InsertScalar("Rotation", 0f);
-            propertySet.InsertVector3("CenterPointOffset", new Vector3(redSprite.Size.X / 2 - blueSprite.Size.X / 2,
-                                                                       redSprite.Size.Y / 2 - blueSprite.Size.Y / 2, 0));
+
+            //var propertySet = new PropertySet(compositor)
+            //{
+            //    Rotation = 0,
+            //    CenterPointOffset = new Vector3(redSprite.Size.X / 2 - blueSprite.Size.X / 2, redSprite.Size.Y / 2 - blueSprite.Size.Y / 2, 0)
+            //};
+
+            var propertySet = new
+            {
+                Rotation = 0,
+                CenterPointOffset = new Vector3(redSprite.Size.X / 2 - blueSprite.Size.X / 2, redSprite.Size.Y / 2 - blueSprite.Size.Y / 2, 0)
+            };
 
 
-            expressionAnimation.ExpressionLambda(c => redSprite.Offset + propertySet.Get<Vector3>("CenterPointOffset")
-            + c.Vector3(c.Cos(c.ToRadians(propertySet.Get<float>("Rotation"))) * 150, c.Sin(c.ToRadians(propertySet.Get<float>("Rotation"))) * 75, 0));
+            //CompositionPropertySet propertySet = compositor.CreatePropertySet();
+            //propertySet.InsertScalar("Rotation", 0f);
+            //propertySet.InsertVector3("CenterPointOffset", new Vector3(redSprite.Size.X / 2 - blueSprite.Size.X / 2,
+            //                                                           redSprite.Size.Y / 2 - blueSprite.Size.Y / 2, 0));
+
+            var props = expressionAnimation.ExpressionLambda(c => redSprite.Offset + propertySet.CenterPointOffset
+            + c.Vector3(c.Cos(c.ToRadians(propertySet.Rotation)) * 150, c.Sin(c.ToRadians(propertySet.Rotation)) * 75, 0));
 
             //expressionAnimation.Expression = "visual.Offset + " +
             //                                                                               "propertySet.CenterPointOffset + " +
@@ -117,8 +128,8 @@ namespace CompositionSampleGallery
             rotAnimation.InsertKeyFrame(1.0f, 360f, linear);
             rotAnimation.Duration = TimeSpan.FromMilliseconds(4000);
             rotAnimation.IterationBehavior = AnimationIterationBehavior.Forever;
-            propertySet.StartAnimation("Rotation", rotAnimation);
-
+            //propertySet.PropertySet.StartAnimation("Rotation", rotAnimation);
+            ((CompositionPropertySet)props["propertySet"]).StartAnimation("Rotation", rotAnimation);
             // Lastly, animation the Offset of the red sprite to see the expression track appropriately
             var offsetAnimation = compositor.CreateVector3KeyFrameAnimation();
             offsetAnimation.InsertKeyFrame(0f, new Vector3(125f, 50f, 0f));
@@ -137,5 +148,18 @@ namespace CompositionSampleGallery
 
         private IManagedSurface _redBallSurface;
         private IManagedSurface _blueBallSurface;
+
+
+        class PropertySet : CompositionPropertySetWrapper
+        {
+            public PropertySet(Compositor comp) : base(comp)
+            {
+
+            }
+
+            public float Rotation { get { return GetScalar(); } set { SetValue(value); } }
+            public Vector3 CenterPointOffset { get { return GetVector3(); } set { SetValue(value); } }
+
+        }
     }
 }
