@@ -87,13 +87,6 @@ namespace CompositionSampleGallery
             // animation these property leading to the expression being re-evaluated per frame.
             //
 
-
-            //var propertySet = new PropertySet(compositor)
-            //{
-            //    Rotation = 0,
-            //    CenterPointOffset = new Vector3(redSprite.Size.X / 2 - blueSprite.Size.X / 2, redSprite.Size.Y / 2 - blueSprite.Size.Y / 2, 0)
-            //};
-
             var propertySet = new
             {
                 Rotation = 0,
@@ -101,10 +94,6 @@ namespace CompositionSampleGallery
             };
 
 
-            //CompositionPropertySet propertySet = compositor.CreatePropertySet();
-            //propertySet.InsertScalar("Rotation", 0f);
-            //propertySet.InsertVector3("CenterPointOffset", new Vector3(redSprite.Size.X / 2 - blueSprite.Size.X / 2,
-            //                                                           redSprite.Size.Y / 2 - blueSprite.Size.Y / 2, 0));
 
             var props = expressionAnimation.ExpressionLambda(c => redSprite.Offset + propertySet.CenterPointOffset
             + c.Vector3(c.Cos(c.ToRadians(propertySet.Rotation)) * 150, c.Sin(c.ToRadians(propertySet.Rotation)) * 75, 0));
@@ -119,7 +108,7 @@ namespace CompositionSampleGallery
             //expressionAnimation.SetReferenceParameter("visual", redSprite);
 
             // Start the expression animation!
-            blueSprite.StartAnimation("Offset", expressionAnimation);
+            blueSprite.StartAnimation(r=> r.Offset, expressionAnimation);
 
 
             // Now animate the rotation property in the property bag, this generates the orbitting motion.
