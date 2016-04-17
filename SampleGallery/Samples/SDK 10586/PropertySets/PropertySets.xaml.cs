@@ -45,6 +45,7 @@ namespace CompositionSampleGallery
             ElementCompositionPreview.SetElementChildVisual(MyGrid, container);
 
 
+
             //
             // Create a couple of SurfaceBrushes for the orbiters and center
             //
@@ -75,14 +76,6 @@ namespace CompositionSampleGallery
             container.Children.InsertAtTop(blueSprite);
 
             //
-            // Create the expression.  This expression positions the orbiting sprite relative to the center of
-            // of the red sprite's center.  As we animate the red sprite's position, the expression will read
-            // the current value of it's offset and keep the blue sprite locked in orbit.
-            //
-
-            ExpressionAnimation expressionAnimation = compositor.CreateExpressionAnimation();
-
-            //
             // Create the PropertySet.  This property bag contains all the value referenced in the expression.  We can
             // animation these property leading to the expression being re-evaluated per frame.
             //
@@ -92,24 +85,9 @@ namespace CompositionSampleGallery
                 Rotation = 0,
                 CenterPointOffset = new Vector3(redSprite.Size.X / 2 - blueSprite.Size.X / 2, redSprite.Size.Y / 2 - blueSprite.Size.Y / 2, 0)
             };
-
-
-
-            var props = expressionAnimation.ExpressionLambda(c => redSprite.Offset + propertySet.CenterPointOffset
-            + c.Vector3(c.Cos(c.ToRadians(propertySet.Rotation)) * 150, c.Sin(c.ToRadians(propertySet.Rotation)) * 75, 0));
-
-            //expressionAnimation.Expression = "visual.Offset + " +
-            //                                                                               "propertySet.CenterPointOffset + " +
-            //                                                                               "Vector3(cos(ToRadians(propertySet.Rotation)) * 150," +
-            //                                                                                       "sin(ToRadians(propertySet.Rotation)) * 75, 0)";
-
-            //// Set the parameters of the expression animation
-            //expressionAnimation.SetReferenceParameter("propertySet", propertySet);
-            //expressionAnimation.SetReferenceParameter("visual", redSprite);
-
-            // Start the expression animation!
-            blueSprite.StartAnimation(r=> r.Offset, expressionAnimation);
-
+            
+            var props = blueSprite.StartAnimation(r => r.Offset, c => redSprite.Offset + propertySet.CenterPointOffset
+            + c.Vector3(c.Cos(c.ToRadians(propertySet.Rotation)) * 150, c.Sin(c.ToRadians(propertySet.Rotation)) * 75, 0)).Properties;
 
             // Now animate the rotation property in the property bag, this generates the orbitting motion.
             var linear = compositor.CreateLinearEasingFunction();
@@ -117,8 +95,9 @@ namespace CompositionSampleGallery
             rotAnimation.InsertKeyFrame(1.0f, 360f, linear);
             rotAnimation.Duration = TimeSpan.FromMilliseconds(4000);
             rotAnimation.IterationBehavior = AnimationIterationBehavior.Forever;
-            //propertySet.PropertySet.StartAnimation("Rotation", rotAnimation);
-            ((CompositionPropertySet)props["propertySet"]).StartAnimation("Rotation", rotAnimation);
+
+            props.Get(() => propertySet).StartAnimation(r => r.Rotation, rotAnimation);
+
             // Lastly, animation the Offset of the red sprite to see the expression track appropriately
             var offsetAnimation = compositor.CreateVector3KeyFrameAnimation();
             offsetAnimation.InsertKeyFrame(0f, new Vector3(125f, 50f, 0f));
@@ -139,16 +118,15 @@ namespace CompositionSampleGallery
         private IManagedSurface _blueBallSurface;
 
 
-        class PropertySet : CompositionPropertySetWrapper
+        class MyPropertySet : CompositionPropertySetWrapper
         {
-            public PropertySet(Compositor comp) : base(comp)
+            public MyPropertySet(Compositor comp) : base(comp)
             {
 
             }
-
+            
             public float Rotation { get { return GetScalar(); } set { SetValue(value); } }
             public Vector3 CenterPointOffset { get { return GetVector3(); } set { SetValue(value); } }
-
         }
     }
 }
