@@ -86,7 +86,7 @@ namespace CompositionSampleGallery
                 CenterPointOffset = new Vector3(redSprite.Size.X / 2 - blueSprite.Size.X / 2, redSprite.Size.Y / 2 - blueSprite.Size.Y / 2, 0)
             };
             
-            var props = blueSprite.StartAnimation(r => r.Offset, c => redSprite.Offset + propertySet.CenterPointOffset
+            var props = blueSprite.CreateAnimation(r => r.Offset, c => redSprite.Offset + propertySet.CenterPointOffset
             + c.Vector3(c.Cos(c.ToRadians(propertySet.Rotation)) * 150, c.Sin(c.ToRadians(propertySet.Rotation)) * 75, 0)).Properties;
 
             // Now animate the rotation property in the property bag, this generates the orbitting motion.
@@ -96,7 +96,7 @@ namespace CompositionSampleGallery
             rotAnimation.Duration = TimeSpan.FromMilliseconds(4000);
             rotAnimation.IterationBehavior = AnimationIterationBehavior.Forever;
 
-            props.Get(() => propertySet).StartAnimation(r => r.Rotation, rotAnimation);
+            props.Get(() => propertySet).CreateAnimation(r => r.Rotation, rotAnimation);
 
             // Lastly, animation the Offset of the red sprite to see the expression track appropriately
             var offsetAnimation = compositor.CreateVector3KeyFrameAnimation();
