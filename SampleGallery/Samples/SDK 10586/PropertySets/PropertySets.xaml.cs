@@ -82,30 +82,16 @@ namespace CompositionSampleGallery
 
             var propertySet = new
             {
-                Rotation = 0,
+                Rotation = 0f,
                 CenterPointOffset = new Vector3(redSprite.Size.X / 2 - blueSprite.Size.X / 2, redSprite.Size.Y / 2 - blueSprite.Size.Y / 2, 0)
             };
-            
+
             var props = blueSprite.CreateAnimation(r => r.Offset, c => redSprite.Offset + propertySet.CenterPointOffset
-            + c.Vector3(c.Cos(c.ToRadians(propertySet.Rotation)) * 150, c.Sin(c.ToRadians(propertySet.Rotation)) * 75, 0)).Properties;
-
-            // Now animate the rotation property in the property bag, this generates the orbitting motion.
-            var linear = compositor.CreateLinearEasingFunction();
-            var rotAnimation = compositor.CreateScalarKeyFrameAnimation();
-            rotAnimation.InsertKeyFrame(1.0f, 360f, linear);
-            rotAnimation.Duration = TimeSpan.FromMilliseconds(4000);
-            rotAnimation.IterationBehavior = AnimationIterationBehavior.Forever;
-
-            props.Get(() => propertySet).CreateAnimation(r => r.Rotation, rotAnimation);
-
-            // Lastly, animation the Offset of the red sprite to see the expression track appropriately
-            var offsetAnimation = compositor.CreateVector3KeyFrameAnimation();
-            offsetAnimation.InsertKeyFrame(0f, new Vector3(125f, 50f, 0f));
-            offsetAnimation.InsertKeyFrame(.5f, new Vector3(125f, 200f, 0f));
-            offsetAnimation.InsertKeyFrame(1f, new Vector3(125f, 50f, 0f));
-            offsetAnimation.Duration = TimeSpan.FromMilliseconds(4000);
-            offsetAnimation.IterationBehavior = AnimationIterationBehavior.Forever;
-            redSprite.StartAnimation("Offset", offsetAnimation);
+            + c.Vector3(c.Cos(c.ToRadians(propertySet.Rotation)) * 150, c.Sin(c.ToRadians(propertySet.Rotation)) * 75, 0)).Start().Properties;
+            
+            props.Get(() => propertySet).CreateAnimation(r => r.Rotation, 360).Duration(4000).Loop().EaseOut(compositor.CreateLinearEasingFunction()).Start();
+            
+            redSprite.CreateAnimation(r => r.Offset, new Vector3(125f, 50f, 0f), new Vector3(125f, 200f, 0f), new Vector3(125f, 50f, 0f)).Duration(4000).Loop().Start();
         }
 
         private void SamplePage_Unloaded(object sender, Windows.UI.Xaml.RoutedEventArgs e)
@@ -118,15 +104,15 @@ namespace CompositionSampleGallery
         private IManagedSurface _blueBallSurface;
 
 
-        class MyPropertySet : CompositionPropertySetWrapper
-        {
-            public MyPropertySet(Compositor comp) : base(comp)
-            {
+        //class MyPropertySet : CompositionPropertySetWrapper
+        //{
+        //    public MyPropertySet(Compositor comp) : base(comp)
+        //    {
 
-            }
+        //    }
             
-            public float Rotation { get { return GetScalar(); } set { SetValue(value); } }
-            public Vector3 CenterPointOffset { get { return GetVector3(); } set { SetValue(value); } }
-        }
+        //    public float Rotation { get { return GetScalar(); } set { SetValue(value); } }
+        //    public Vector3 CenterPointOffset { get { return GetVector3(); } set { SetValue(value); } }
+        //}
     }
 }
