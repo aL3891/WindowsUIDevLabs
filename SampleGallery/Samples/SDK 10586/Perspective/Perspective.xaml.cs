@@ -19,6 +19,7 @@ using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Hosting;
+using CompositionAnimationToolkit;
 
 namespace CompositionSampleGallery
 {
@@ -52,6 +53,8 @@ namespace CompositionSampleGallery
             offsetAnimation.Duration = TimeSpan.FromMilliseconds(8000);
             offsetAnimation.IterationBehavior = AnimationIterationBehavior.Forever;
             visual.StartAnimation("Offset", offsetAnimation);
+            
+            visual.StartAnimation(r => r.Offset, new Vector3(125f, 50f, 0f), new Vector3(125f, 200f, 0f), new Vector3(125f, 50f, 0f)).Duration(4000).Loop();
 
 
             //
