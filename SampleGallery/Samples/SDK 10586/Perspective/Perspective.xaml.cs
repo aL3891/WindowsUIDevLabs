@@ -30,10 +30,10 @@ namespace CompositionSampleGallery
             this.InitializeComponent();
         }
 
-        public static string        StaticSampleName    { get { return "Perspective"; } }
-        public override string      SampleName          { get { return StaticSampleName; } }
-        public override string      SampleDescription   { get { return "Demonstrates how to apply and animate perspective to Composition Visuals."; } }
-        public override string      SampleCodeUri       { get { return "http://go.microsoft.com/fwlink/p/?LinkID=761171"; } }
+        public static string StaticSampleName { get { return "Perspective"; } }
+        public override string SampleName { get { return StaticSampleName; } }
+        public override string SampleDescription { get { return "Demonstrates how to apply and animate perspective to Composition Visuals."; } }
+        public override string SampleCodeUri { get { return "http://go.microsoft.com/fwlink/p/?LinkID=761171"; } }
 
         private void SamplePage_Loaded(object sender, RoutedEventArgs e)
         {
@@ -46,15 +46,15 @@ namespace CompositionSampleGallery
             Compositor compositor = visual.Compositor;
 
             // Animate the Z offset towards the vanishing point and back again
-            Vector3KeyFrameAnimation offsetAnimation = compositor.CreateVector3KeyFrameAnimation();
-            offsetAnimation.InsertKeyFrame(0.0f, new Vector3(0, 0, 0));
-            offsetAnimation.InsertKeyFrame(0.5f, new Vector3(0, 0, -2000));
-            offsetAnimation.InsertKeyFrame(1.0f, new Vector3(0, 0, 0));
-            offsetAnimation.Duration = TimeSpan.FromMilliseconds(8000);
-            offsetAnimation.IterationBehavior = AnimationIterationBehavior.Forever;
-            visual.StartAnimation("Offset", offsetAnimation);
-            
-            visual.StartAnimation(r => r.Offset, new Vector3(125f, 50f, 0f), new Vector3(125f, 200f, 0f), new Vector3(125f, 50f, 0f)).Duration(4000).Loop();
+            //Vector3KeyFrameAnimation offsetAnimation = compositor.CreateVector3KeyFrameAnimation();
+            //offsetAnimation.InsertKeyFrame(0.0f, new Vector3(0, 0, 0));
+            //offsetAnimation.InsertKeyFrame(0.5f, new Vector3(0, 0, -2000));
+            //offsetAnimation.InsertKeyFrame(1.0f, new Vector3(0, 0, 0));
+            //offsetAnimation.Duration = TimeSpan.FromMilliseconds(8000);
+            //offsetAnimation.IterationBehavior = AnimationIterationBehavior.Forever;
+            //visual.StartAnimation("Offset", offsetAnimation);
+
+            visual.CreateAnimation(r => r.Offset, new Vector3(0, 0, 0f), new Vector3(0, 0, -2000f), new Vector3(0, 0, 0)).Duration(8000).Loop().Start();
 
 
             //
@@ -62,7 +62,7 @@ namespace CompositionSampleGallery
             //
 
             visual = ElementCompositionPreview.GetElementVisual(RotatedImage);
-            
+
             // Rotate around the center
             visual.Size = new Vector2((float)RotatedImage.Width / 2, (float)RotatedImage.Height / 2);
             visual.CenterPoint = new Vector3(visual.Size.X, visual.Size.Y, 0f);
@@ -72,21 +72,28 @@ namespace CompositionSampleGallery
 
             // Start the rotation animation
             LinearEasingFunction linear = compositor.CreateLinearEasingFunction();
-            ScalarKeyFrameAnimation rotationAnimation = compositor.CreateScalarKeyFrameAnimation();
-            rotationAnimation.InsertKeyFrame(0, 0, linear);
-            rotationAnimation.InsertKeyFrame(1, 360f, linear);
-            rotationAnimation.Duration = TimeSpan.FromMilliseconds(8000);
-            rotationAnimation.IterationBehavior = AnimationIterationBehavior.Forever;
-            visual.StartAnimation("RotationAngleInDegrees", rotationAnimation);
+            //ScalarKeyFrameAnimation rotationAnimation = compositor.CreateScalarKeyFrameAnimation();
+            //rotationAnimation.InsertKeyFrame(0, 0, linear);
+            //rotationAnimation.InsertKeyFrame(1, 360f, linear);
+            //rotationAnimation.Duration = TimeSpan.FromMilliseconds(8000);
+            //rotationAnimation.IterationBehavior = AnimationIterationBehavior.Forever;
+            //visual.StartAnimation("RotationAngleInDegrees", rotationAnimation);
+
+            visual.CreateAnimation(v => v.RotationAngleInDegrees, 0, 180, 360).Duration(8000).Loop().Start();
+
 
             // Animate up and down to show differences in perspective relative to the vanishing point.
-            offsetAnimation = compositor.CreateVector3KeyFrameAnimation();
-            offsetAnimation.InsertKeyFrame(0.0f, new Vector3(0,    0, -200f));
-            offsetAnimation.InsertKeyFrame(0.5f, new Vector3(0, 300f, -200f));
-            offsetAnimation.InsertKeyFrame(1.0f, new Vector3(0,    0, -200f));
-            offsetAnimation.Duration = TimeSpan.FromMilliseconds(8000);
-            offsetAnimation.IterationBehavior = AnimationIterationBehavior.Forever;
-            visual.StartAnimation("Offset", offsetAnimation);
+            //offsetAnimation = compositor.CreateVector3KeyFrameAnimation();
+
+            //offsetAnimation.InsertKeyFrame(0.0f, new Vector3(0, 0, -200f));
+            //offsetAnimation.InsertKeyFrame(0.5f, new Vector3(0, 300f, -200f));
+            //offsetAnimation.InsertKeyFrame(1.0f, new Vector3(0, 0, -200f));
+            //offsetAnimation.Duration = TimeSpan.FromMilliseconds(8000);
+            //offsetAnimation.IterationBehavior = AnimationIterationBehavior.Forever;
+
+            //visual.StartAnimation("Offset", offsetAnimation);
+
+            visual.CreateAnimation(v => v.Offset, new Vector3(0, 0, -200f), new Vector3(0, 300, -200f), new Vector3(0, 0, -200f)).Loop().Duration(8000).Start();
         }
 
     }

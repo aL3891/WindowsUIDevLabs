@@ -8,7 +8,7 @@
     <OutputType>AppContainerExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>CompositionSampleGallery</RootNamespace>
-    <AssemblyName>CompositionSampleGallery</AssemblyName>
+    <AssemblyName>aaa</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
     <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
@@ -338,6 +338,10 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\CompositionAnimationToolkit\CompositionAnimationToolkit\CompositionAnimationToolkit.csproj">
+      <Project>{b1e26b67-d32c-4e05-9fe4-6dd9c6ec1e4f}</Project>
+      <Name>CompositionAnimationToolkit</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SamplesCommon\SamplesCommon\SamplesCommon.csproj">
       <Project>{0b6a4830-d1ff-4018-baa2-7257eb4579fe}</Project>
       <Name>SamplesCommon</Name>

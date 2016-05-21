@@ -1,6 +1,5 @@
 ﻿{
   "dependencies": {
-    "CompositionAnimationToolkit": "0.0.7-beta",
     "Microsoft.NETCore.UniversalWindowsPlatform": "5.1.0",
     "Win2D.uwp": "1.17.0"
   },
